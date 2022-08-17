@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <META HTTP-EQUIV="Refresh" CONTENT=60>
+    <title>Smart Energy Saver</title>
+    <!-- <link rel="icon" href="images/logo.png"> should add favicon  -->
+    <!-- <link rel="stylesheet" type="text/css" href="css/main.css"> -->
+    <link rel="stylesheet" type="text/css" href="custom.css">
+    <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-database.js"></script>
+    <!-- Boostrap File -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!------------------------Styling------------------------->
+    <!-- <style>
+        @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300&display=swap');
+    </style> -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Secular+One&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/1f8fcc82f7.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+</head>
+
+
+
+<body>
+    <!-- style="background: url(images/back.jpg); background-position: center;background-repeat: repeat;background-size: 100%;" -->
+    <!------------------------Page Layout Content------------------------->
+    <header>
+        <p style="margin-bottom: 0px">Smart Energy Saver</p>
+    </header>
+    <div>
+        <span id="clock" class="clock">
+        </span>
+    </div>
+    <div class="container" style="margin-bottom: 2%;">
+        <div class="row gx-5">
+            <div class="col-md-4 outer">
+                <div class="sha">
+                    <h2 class="animate__animated animate__tada" style="text-align: center;">Status</h2>
+                    <p id="sta" class="id"></p>
+                </div>
+            </div>
+            <div class="col-md-4 outer">
+                <div class="sha">
+                    <h2 class="animate__animated animate__tada" style="text-align: center;">Battery Percentage</h2>
+                    <p id="per" class="id"></p>
+                </div>
+            </div>
+            <div class="col-md-4 outer">
+                <div class="sha">
+                    <h2 class="animate__animated animate__tada" style="text-align: center;">Voltage</h2>
+                    <p id="vol" class="id"></p>
+                </div>
+            </div>
+            <div class="col-md-4 outer">
+                <div class="sha">
+                    <h2 class="animate__animated animate__tada" style="text-align: center;">Current Set Time</h2>
+                    <p id="tt" class="id"></p>
+                </div>
+            </div>
+            <div class="col outer">
+                <div class="sha">
+                    <h2 class="animate__animated animate__tada" style="text-align: center;">Set Desired Time</h2>
+                    <div style="margin-top: 5%;">
+                        <input type="time" id="time">
+                        <button id="insert">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>
+            <!-- 2022&copy; Mar Augusthinose College Weather Station-->2022&copy; Mar Augusthinose College , Ramapuram
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+            Developed By Christo Joseph and Toney Abraham (MSc Electronics 2020-22)
+        </p>
+    </footer>
+
+    <!------------------------Scripting------------------------->
+    <!-- <script src="js/main.js"></script> -->
+    <!------------------------Scripting------------------------->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+        integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+        integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+        crossorigin="anonymous"></script>
+    <!-- Configuration of firebase -->
+    <!-- <script>
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyBreV83BoQUQKQNV1bUBJCTZtXWuXHGXhA",
+            authDomain: "mac-inverter.firebaseapp.com",
+            databaseURL: "https://mac-inverter-default-rtdb.firebaseio.com",
+            projectId: "mac-inverter",
+            storageBucket: "mac-inverter.appspot.com",
+            messagingSenderId: "630050265335",
+            appId: "1:630050265335:web:b70d93cec4d2503c171bf2",
+            measurementId: "G-KNWP1Z9CY2"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        var firebaseRef = firebase.database().ref("devices");
+        firebaseRef.once("value", function (snapshot) {
+            var data = snapshot.val();
+            for (let i in data) {
+                console.log(data[i]);
+                // document.write(data[i]);
+                // document.getElementById("temp").innerHTML=(data[i]);
+
+            }
+            var s = data["status"];
+            if (s == 1) {
+                document.getElementById("sta").innerText = "Battery";
+            } else {
+                document.getElementById("sta").innerText = "Mains";
+            }
+            // let sta = document.getElementById("sta");
+            // sta.innerHTML = s;
+
+            var p = data["percentage"];
+            let per = document.getElementById("per");
+            per.innerHTML = p;
+
+            var v = data["voltage"];
+            let vol = document.getElementById("vol");
+            vol.innerHTML = v;
+
+            var t = data["time"];
+            let tt = document.getElementById("tt");
+            tt.innerHTML = t;
+
+            // var u = data["uvindex"];
+            // let uv = document.getElementById("uvindex");
+            // uvindex.innerHTML = u + "&nbsp;mW/&#13216;";
+        })
+    </script> -->
+    <script>
+        function currentTime() {
+            let date = new Date();
+            let hh = date.getHours();
+            let mm = date.getMinutes();
+            let ss = date.getSeconds();
+            let session = "AM";
+            let yy = date.getFullYear();
+            const month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            let mon = month[date.getMonth()];
+            let dd = date.getDate();
+            let da = dd + " " + mon + " " + yy + " ";
+
+
+
+            if (hh == 0) {
+                hh = 12;
+            }
+            if (hh > 12) {
+                hh = hh - 12;
+                session = "PM";
+            }
+
+            hh = (hh < 10) ? "0" + hh : hh;
+            mm = (mm < 10) ? "0" + mm : mm;
+            ss = (ss < 10) ? "0" + ss : ss;
+
+            let time = da + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + hh + ":" + mm + ":" + ss + " " + session;
+
+            document.getElementById("clock").innerText = time;
+            var t = setTimeout(function () { currentTime() }, 1000);
+
+        }
+        currentTime();
+        // var per = 20;
+        // document.getElementById("per").innerHTML = per + '%';
+        // var sta = "kseb";
+        // document.getElementById("status").innerHTML = sta;
+        // var vol = "12v";
+        // document.getElementById("vol").innerHTML = vol;
+        // var crnt = "18:30";
+        // document.getElementById("crnt").innerHTML = crnt;
+    </script>
+    <!-- import From Firebse Data -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-analytics.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+            apiKey: "AIzaSyBreV83BoQUQKQNV1bUBJCTZtXWuXHGXhA",
+            authDomain: "mac-inverter.firebaseapp.com",
+            databaseURL: "https://mac-inverter-default-rtdb.firebaseio.com",
+            projectId: "mac-inverter",
+            storageBucket: "mac-inverter.appspot.com",
+            messagingSenderId: "630050265335",
+            appId: "1:630050265335:web:b70d93cec4d2503c171bf2",
+            measurementId: "G-KNWP1Z9CY2"
+        };
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+
+        import { getDatabase, ref, get, set, child, update, remove }
+            from "https://www.gstatic.com/firebasejs/9.9.2/firebase-database.js";
+
+        const db = getDatabase();
+
+
+        // data to be inserted
+        var time = document.getElementById("time");
+        var btn = document.getElementById("insert");
+        // var sta = document.getElementById("sta");
+        // var per = document.getElementById("per");
+        // var tt = document.getElementById("tt");
+
+        function insertdata() {
+            update(ref(db, "devices"), {
+                time: time.value
+            })
+                .then(() => {
+                    location.reload(true);
+                    alert("Time updated successfully.");                   
+                })
+                .catch((error) => {
+                    alert("Time not inserted." + error);
+                });
+        }
+        // Assign Events to the button
+        insert.addEventListener('click', insertdata);
+
+        // Selecting a data from db
+        firebase.initializeApp(firebaseConfig);
+        var firebaseRef = firebase.database().ref("devices");
+        firebaseRef.once("value", function (snapshot) {
+            var data = snapshot.val();
+            for (let i in data) {
+                console.log(data[i]);
+                // document.write(data[i]);
+                // document.getElementById("temp").innerHTML=(data[i]);
+
+            }
+            var s = data["status"];
+            if (s == 1) {
+                document.getElementById("sta").innerText = "Battery";
+            } else {
+                document.getElementById("sta").innerText = "Mains";
+            }
+            // let sta = document.getElementById("sta");
+            // sta.innerHTML = s;
+
+            var p = data["percentage"];
+            let per = document.getElementById("per");
+            per.innerHTML = p+" %";
+
+            var v = data["voltage"];
+            let vol = document.getElementById("vol");
+            vol.innerHTML = v+" V";
+
+            var t = data["time"];
+            let tt = document.getElementById("tt");
+            tt.innerHTML = t;
+        })
+
+    </script>
+</body>
+
+</html>
